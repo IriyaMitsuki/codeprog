@@ -8,20 +8,20 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest # Используем Windows для сборки .exe
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v3
-    - name: Install libcurl (Windows)
-      uses: dsaltares/actions-curl-setup-windows@v1
-      with:
-        version: latest  # или укажите конкретную версию
+    - name: Setup cURL
+      uses: mlocati/setup-curl@v1.1.3
+    - name: Install libssh2 (dependency for some curl features)
+      run: vcpkg.exe install libssh2:x64-windows # если нужен libssh2
     - name: Configure CMake
-      run: cmake -S . -B build -G "MinGW Makefiles" # Или другой генератор для Windows
+      run: cmake -S . -B build -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
     - name: Build
       run: cmake --build build --config Release
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
         name: parser-exe
-        path: build/Release/parser.exe # Путь к .exe файлу
+        path: build/Release/parser.exe
