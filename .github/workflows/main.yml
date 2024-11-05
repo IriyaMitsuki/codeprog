@@ -1,0 +1,20 @@
+name: C++ Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install libcurl
+      run: sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev
+    - name: Compile
+      run: g++ -std=c++11 main.cpp -o parser -lcurl
+    - name: Run
+      run: ./parser 
