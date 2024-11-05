@@ -8,13 +8,20 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest # Используем Windows для сборки .exe
 
     steps:
     - uses: actions/checkout@v3
-    - name: Install libcurl
-      run: sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev
-    - name: Compile
-      run: g++ -std=c++11 main.cpp -o parser -lcurl
-    - name: Run
-      run: ./parser 
+    - name: Install libcurl (Windows)
+      uses: dsaltares/actions-curl-setup-windows@v1
+      with:
+        version: latest  # или укажите конкретную версию
+    - name: Configure CMake
+      run: cmake -S . -B build -G "MinGW Makefiles" # Или другой генератор для Windows
+    - name: Build
+      run: cmake --build build --config Release
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: parser-exe
+        path: build/Release/parser.exe # Путь к .exe файлу
